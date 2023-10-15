@@ -32,13 +32,13 @@ See also:
 ## Installation
 
 ```
-$ cargo install --git https://github.com/cpg314/cargo-harbormaster
+$ cargo install --git https://github.com/cpg314/cargo-group-imports
 ```
 
 ## Usage
 
 ```
-cargo-group-imports [OPTIONS] [WORKSPACE]
+cargo group-imports [OPTIONS] [WORKSPACE]
 
 Arguments:
   [WORKSPACE]  [default: current folder]

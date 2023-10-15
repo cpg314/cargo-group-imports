@@ -5,9 +5,8 @@ use std::collections::{BTreeMap, BTreeSet, HashSet};
 use std::hash::Hash;
 use std::io::Write;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 
-use clap::Parser;
+use clap::{Parser, Subcommand};
 use itertools::Itertools;
 use log::*;
 use tree_sitter::TreeCursor;
@@ -26,6 +25,17 @@ use tree_sitter::TreeCursor;
 /// https://github.com/rust-lang/rustfmt/blob/master/src/reorder.rs
 #[derive(Parser)]
 #[clap(verbatim_doc_comment)]
+pub struct MainFlags {
+    #[command(subcommand)]
+    pub command: Command,
+}
+
+#[derive(Subcommand)]
+pub enum Command {
+    GroupImports(Flags),
+}
+
+#[derive(Parser)]
 pub struct Flags {
     #[clap(default_value_os_t = std::env::current_dir().unwrap())]
     pub workspace: PathBuf,
@@ -237,7 +247,7 @@ pub fn process_file(
     // super::,crate:: etc. imports. Most of the runtime is due to running rustfmt.
     let modified = source != source_modified;
     if modified && args.rustfmt {
-        let mut cmd = Command::new("rustfmt")
+        let mut cmd = std::process::Command::new("rustfmt")
             .current_dir(&args.workspace)
             .stdin(std::process::Stdio::piped())
             .stdout(std::process::Stdio::piped())

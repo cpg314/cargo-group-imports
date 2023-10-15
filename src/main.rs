@@ -9,7 +9,9 @@ use cargo_group_imports::*;
 
 fn main_impl() -> anyhow::Result<()> {
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
-    let args = Flags::parse();
+    let args = match MainFlags::parse().command {
+        Command::GroupImports(args) => args,
+    };
     let start = std::time::Instant::now();
 
     // Retrieve workspace packages
