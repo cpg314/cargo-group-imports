@@ -2,32 +2,30 @@
 
 Group imports in workspace source files as:
 
+1. Module imports and declarations
+2. Standard library
+3. External crates
+4. Workspace crates
+5. Crate modules
+
+For example (see also the before/after files in `test-data`):
+
+```rust
+mod module;
+use module::Client;
+
+use std::sync::Arc;
+
+use tokio::sync::Mutex;
+
+use other_crate::Flags;
+
+use crate::Options;
+
 ```
-Module imports/declarations
 
-Standard library
-
-External crates
-
-Workspace crates
-
-Crate modules
-```
-
-This roughly corresponds to the `group_imports` unstable rustfmt option, with the difference
+This roughly corresponds to the [`group_imports` unstable rustfmt option](https://rust-lang.github.io/rustfmt/?version=v1.4.38&search=#group_imports), with the difference
 that `rustfmt` does not distinguish workspace crates from external ones.
-
-By default, displays a diff without applying changes, returning code 0 when no changes are
-necessary.
-
-![Screenshot](screenshot.png)
-
-The `--fix` flag allows applying the changes.
-
-See also:
-
-- <https://rust-lang.github.io/rustfmt/?version=v1.4.38&search=#group_imports>
-- <https://github.com/rust-lang/rustfmt/blob/master/src/reorder.rs>
 
 ## Installation
 
@@ -47,3 +45,14 @@ Options:
       --fix   Apply changes
   -h, --help  Print help (see more with '--help')
 ```
+
+By default, the tool checks that the imports are correctly grouped and displays a diff otherwise. The `--fix` flag applies the necessary changes, if any. This matches the behaviour of `cargo clippy`.
+
+![Screenshot](screenshot.png)
+
+```
+$ cargo group-imports
+$ cargo group-imports --fix
+```
+
+The return code is `0` when no changes are necessary, `1` otherwise. This can be used in CI checks.
