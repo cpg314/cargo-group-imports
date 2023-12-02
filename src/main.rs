@@ -9,9 +9,7 @@ use cargo_group_imports::*;
 
 fn main_impl() -> anyhow::Result<()> {
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
-    let args = match MainFlags::parse().command {
-        Command::GroupImports(args) => args,
-    };
+    let Command::GroupImports(args) = MainFlags::parse().command;
     let start = std::time::Instant::now();
 
     // Retrieve workspace packages
@@ -65,7 +63,7 @@ fn main_impl() -> anyhow::Result<()> {
         output.iter().filter(|x| **x).count()
     );
     if !args.fix && output.iter().any(|x| *x) {
-        warn!("All files are not formatted. Rerun without --fix to attempt to fix the issues");
+        warn!("Not all files are formatted. Rerun with --fix to attempt to fix the issues");
         std::process::exit(1);
     }
 
