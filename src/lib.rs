@@ -97,11 +97,11 @@ fn process_line(cursor: &mut TreeCursor, source: &str) -> anyhow::Result<Use> {
     // Find module
     cursor.goto_first_child();
     while cursor.goto_next_sibling() {
-        // TODO: Handle `use_as_clause`
         if [
             "identifier",
             "scoped_identifier",
             "use_wildcard",
+            "use_as_clause",
             "scoped_use_list",
         ]
         .contains(&cursor.node().kind())
