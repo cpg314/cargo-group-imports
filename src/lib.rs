@@ -44,6 +44,17 @@ pub struct Flags {
     pub fix: bool,
     #[clap(skip = true)]
     pub rustfmt: bool,
+    #[clap(long, default_value_t = clap::ColorChoice::Auto)]
+    color: clap::ColorChoice,
+}
+impl Flags {
+    pub fn write_style(&self) -> env_logger::WriteStyle {
+        match self.color {
+            clap::ColorChoice::Auto => env_logger::WriteStyle::Auto,
+            clap::ColorChoice::Always => env_logger::WriteStyle::Always,
+            clap::ColorChoice::Never => env_logger::WriteStyle::Never,
+        }
+    }
 }
 
 #[derive(Default, Debug)]

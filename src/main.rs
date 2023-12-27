@@ -8,8 +8,11 @@ use rayon::prelude::*;
 use cargo_group_imports::*;
 
 fn main_impl() -> anyhow::Result<()> {
-    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
     let Command::GroupImports(args) = MainFlags::parse().command;
+
+    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info"))
+        .write_style(args.write_style())
+        .init();
     let start = std::time::Instant::now();
 
     // Retrieve workspace packages
