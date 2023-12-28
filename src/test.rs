@@ -28,6 +28,7 @@ fn test() -> anyhow::Result<()> {
             &Flags {
                 workspace: Default::default(),
                 rustfmt: false,
+                color: clap::ColorChoice::Auto,
                 fix,
             },
         )

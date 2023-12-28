@@ -42,8 +42,10 @@ Arguments:
   [WORKSPACE]  [default: current folder]
 
 Options:
-      --fix   Apply changes
-  -h, --help  Print help (see more with '--help')
+      --fix            Apply changes
+      --color <COLOR>  [default: auto] [possible values: auto, always, never]
+  -h, --help           Print help
+  -V, --version        Print version
 ```
 
 By default, the tool checks that the imports are correctly grouped and displays a diff otherwise. The `--fix` flag applies the necessary changes, if any. This matches the behaviour of `cargo clippy`.

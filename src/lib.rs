@@ -36,6 +36,7 @@ pub enum Command {
 }
 
 #[derive(Parser)]
+#[clap(version)]
 pub struct Flags {
     #[clap(default_value_os_t = std::env::current_dir().unwrap())]
     pub workspace: PathBuf,
