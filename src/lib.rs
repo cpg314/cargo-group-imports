@@ -6,10 +6,17 @@ use std::hash::Hash;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 
-use clap::{Parser, Subcommand};
+use clap::Parser;
 use itertools::Itertools;
 use log::*;
 use tree_sitter::TreeCursor;
+
+#[derive(Parser)]
+#[command(name = "cargo")]
+#[command(bin_name = "cargo")]
+pub enum MainFlags {
+    GroupImports(Flags),
+}
 
 /// Group imports in workspace source files.
 ///
@@ -24,19 +31,7 @@ use tree_sitter::TreeCursor;
 /// https://rust-lang.github.io/rustfmt/?version=v1.4.38&search=#group_imports
 /// https://github.com/rust-lang/rustfmt/blob/master/src/reorder.rs
 #[derive(Parser)]
-#[clap(verbatim_doc_comment)]
-pub struct MainFlags {
-    #[command(subcommand)]
-    pub command: Command,
-}
-
-#[derive(Subcommand)]
-pub enum Command {
-    GroupImports(Flags),
-}
-
-#[derive(Parser)]
-#[clap(version)]
+#[clap(about, version)]
 pub struct Flags {
     #[clap(default_value_os_t = std::env::current_dir().unwrap())]
     pub workspace: PathBuf,

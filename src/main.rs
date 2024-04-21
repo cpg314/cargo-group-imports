@@ -8,7 +8,7 @@ use rayon::prelude::*;
 use cargo_group_imports::*;
 
 fn main_impl() -> anyhow::Result<()> {
-    let Command::GroupImports(args) = MainFlags::parse().command;
+    let MainFlags::GroupImports(args) = MainFlags::parse();
 
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info"))
         .write_style(args.write_style())
