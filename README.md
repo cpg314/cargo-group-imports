@@ -33,6 +33,8 @@ that `rustfmt` does not distinguish workspace crates from external ones.
 $ cargo install --git https://github.com/cpg314/cargo-group-imports
 ```
 
+Alternatively, see the binaries on the [Releases](https://github.com/cpg314/cargo-group-imports/releases) page.
+
 ## Usage
 
 ```
