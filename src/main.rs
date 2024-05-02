@@ -36,12 +36,18 @@ fn main_impl() -> anyhow::Result<()> {
             let root = package.manifest_path.parent().unwrap();
 
             // Process each file in the package
-            // Only look in src so that the root crate does not pick workspace member sources.
-            let mut files: Vec<PathBuf> = walkdir::WalkDir::new(root.join("src"))
-                .min_depth(1)
+            // Only look in src and tests so that the root crate does not pick workspace member sources.
+            let root_dirs = ["src", "tests"];
+
+            let mut files: Vec<PathBuf> = root_dirs
                 .into_iter()
-                // Exclude target/ for the root package
-                .filter_entry(|e| !e.path().join("CACHEDIR.TAG").exists())
+                .flat_map(|dir| {
+                    walkdir::WalkDir::new(root.join(dir))
+                        .min_depth(1)
+                        .into_iter()
+                        // Exclude target/ for the root package
+                        .filter_entry(|e| !e.path().join("CACHEDIR.TAG").exists())
+                })
                 .filter_map(|e| e.ok())
                 // Rust source files
                 .filter(|f| {
