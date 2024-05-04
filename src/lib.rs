@@ -266,7 +266,7 @@ pub fn process_file(
         stdin.write_all(source_modified.as_bytes())?;
         drop(stdin);
         let out = cmd.wait_with_output()?;
-        anyhow::ensure!(out.status.success());
+        anyhow::ensure!(out.status.success(), "Calling rustfmt failed");
         source_modified = String::from_utf8(out.stdout)?;
     }
 

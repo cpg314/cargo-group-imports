@@ -1,7 +1,6 @@
-use std::collections::HashSet;
 use std::io::Write;
 
-use crate::{process_file, Flags};
+use crate::{process_file, Flags, WorkspacePackages};
 
 #[test]
 fn test() -> anyhow::Result<()> {
@@ -24,7 +23,7 @@ fn test() -> anyhow::Result<()> {
             file.path(),
             "package",
             // Workspace packages
-            &HashSet::from(["other_package".to_string()]),
+            &WorkspacePackages::from([("other_package".to_string(), Default::default())]),
             &Flags {
                 workspace: Default::default(),
                 rustfmt: false,

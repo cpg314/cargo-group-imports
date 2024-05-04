@@ -16,6 +16,5 @@ use crate::test;
 
 use std::io::Read;
 
-macro_rules! macro {
-}
-pub use macro;
+macro_rules! test_macro {}
+pub use test_macro;

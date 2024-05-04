@@ -19,6 +19,5 @@ use crate::test2 as test3;
 use super::test;
 use crate::test;
 
-macro_rules! macro {
-}
-pub use macro;
+macro_rules! test_macro {}
+pub use test_macro;
