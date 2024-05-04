@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod test;
 
-use std::collections::{BTreeMap, BTreeSet, HashSet};
+use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 use std::hash::Hash;
 use std::io::Write;
 use std::path::{Path, PathBuf};
@@ -124,11 +124,14 @@ fn process_line(cursor: &mut TreeCursor, source: &str) -> anyhow::Result<Use> {
     cursor.goto_parent();
     Ok(u)
 }
+
+pub type WorkspacePackages = HashMap<String, camino::Utf8PathBuf>;
+
 /// Returns whether the file has been changed, or would have been changed.
 pub fn process_file(
     filename: &Path,
     package_name: &str,
-    workspace_packages: &HashSet<String>,
+    workspace_packages: &WorkspacePackages,
     args: &Flags,
 ) -> anyhow::Result<bool> {
     // Phase 1: parse with tree-sitter
@@ -202,7 +205,7 @@ pub fn process_file(
             UseType::Crate
         } else if mods_names.contains(&u.module) || u.module_decl || u.module == "self" {
             UseType::Module
-        } else if workspace_packages.contains(u.module.as_str()) {
+        } else if workspace_packages.contains_key(&u.module) {
             UseType::Workspace
         } else {
             UseType::External

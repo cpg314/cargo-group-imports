@@ -117,6 +117,7 @@ name = "cargo-group-imports"
 version = "0.1.4"
 dependencies = [
  "anyhow",
+ "camino",
  "cargo_metadata",
  "cc",
  "clap 4.4.6",

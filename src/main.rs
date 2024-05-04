@@ -1,4 +1,3 @@
-use std::collections::HashSet;
 use std::path::PathBuf;
 
 use clap::Parser;
@@ -20,28 +19,37 @@ fn main_impl() -> anyhow::Result<()> {
         .manifest_path("Cargo.toml")
         .current_dir(&args.workspace)
         .exec()?;
-    let workspace_packages: HashSet<String> = metadata
+    let workspace_packages: WorkspacePackages = metadata
         .workspace_packages()
         .into_iter()
-        .map(|p| p.name.replace('-', "_"))
+        .map(|p| {
+            (
+                p.name.replace('-', "_"),
+                p.manifest_path.parent().unwrap().into(),
+            )
+        })
         .collect();
-    debug!("Workspace packages: {:?}", workspace_packages);
+    info!("Workspace packages: {:?}", workspace_packages);
 
-    let output = metadata
-        .workspace_packages()
-        .into_par_iter()
+    let output = workspace_packages
+        .par_iter()
         // Process each package
-        .flat_map(|package| {
-            info!("Processing {}", package.name);
-            let root = package.manifest_path.parent().unwrap();
+        .flat_map(|(name, root)| {
+            info!("Processing {}", name);
 
             // Process each file in the package
-            // Only look in src so that the root crate does not pick workspace member sources.
-            let mut files: Vec<PathBuf> = walkdir::WalkDir::new(root.join("src"))
-                .min_depth(1)
+            let files: Vec<PathBuf> = walkdir::WalkDir::new(root)
                 .into_iter()
-                // Exclude target/ for the root package
-                .filter_entry(|e| !e.path().join("CACHEDIR.TAG").exists())
+                .filter_entry(|e| {
+                    // Exclude e.g. target/ for the root package
+                    !e.path().join("CACHEDIR.TAG").exists()
+                    // Exclude other workspace members (especially for the root crate)
+                    && workspace_packages
+                        .iter()
+                        .filter(|(name2, _)| name2 != &name )
+                        .all(|(_, root2)| {
+                            root2 == &metadata.workspace_root || !e.path().starts_with(root2)})
+                })
                 .filter_map(|e| e.ok())
                 // Rust source files
                 .filter(|f| {
@@ -49,14 +57,9 @@ fn main_impl() -> anyhow::Result<()> {
                 })
                 .map(|f| f.path().to_owned())
                 .collect();
-            // build.rs
-            let build = root.join("build.rs");
-            if build.is_file() {
-                files.push(build.into());
-            }
             files
                 .into_par_iter()
-                .map(|f| process_file(&f, &package.name, &workspace_packages, &args))
+                .map(|f| process_file(&f, name, &workspace_packages, &args))
         })
         .collect::<Result<Vec<_>, _>>()?;
     info!(

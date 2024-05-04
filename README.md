@@ -27,9 +27,22 @@ use crate::Options;
 This roughly corresponds to the [`group_imports` unstable rustfmt option](https://rust-lang.github.io/rustfmt/?version=v1.4.38&search=#group_imports), with the difference
 that `rustfmt` does not distinguish workspace crates from external ones.
 
+### Tests and binaries
+
+For the purpose of grouping imports, test and binaries are considered to be in the same crate, although they technically are different crates. This can for example result in the following grouping:
+
+```rust
+use anyhow::Context;
+
+use mycrate::**; // the binary belongs to `mycrate`.
+use crate::test_utils;
+```
+
+This is driven by implementation simplicity rather than a true design choice.
+
 ## Installation
 
-```
+```console
 $ cargo install --git https://github.com/cpg314/cargo-group-imports
 ```
 
@@ -54,7 +67,7 @@ By default, the tool checks that the imports are correctly grouped and displays 
 
 ![Screenshot](screenshot.png)
 
-```
+```console
 $ cargo group-imports
 $ cargo group-imports --fix
 ```
