@@ -2,6 +2,10 @@
 name = "cargo-group-imports"
 version = "0.1.5"
 edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "Group imports in Rust workspaces "
+repository = "https://github.com/cpg314/cargo-group-imports"
+categories = ["development-tools::cargo-plugins", "command-line-utilities"]
 
 [[bin]]
 name = "cargo-group-imports"
